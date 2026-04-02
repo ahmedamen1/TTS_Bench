@@ -3,483 +3,384 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arabic TTS Arena — مقارنة محركات النطق</title>
+<title>Arabic TTS Arena — همسة × إيليفن لابز</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #16161f;
-    --border: #1e1e2e;
-    --border2: #2a2a3e;
-    --text: #e8e8f0;
-    --muted: #7070a0;
-    --accent-h: #00e5ff;
-    --accent-c: #ff6b35;
-    --accent-e: #a78bfa;
-    --accent-h-dim: rgba(0,229,255,0.12);
-    --accent-c-dim: rgba(255,107,53,0.12);
-    --accent-e-dim: rgba(167,139,250,0.12);
-    --green: #22c55e;
-    --red: #ef4444;
-    --yellow: #f59e0b;
-    --radius: 12px;
-    --mono: 'IBM Plex Mono', monospace;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Cairo', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+:root {
+  --bg: #080810;
+  --surface: #0f0f1a;
+  --surface2: #141422;
+  --surface3: #1a1a2e;
+  --border: #1e1e35;
+  --border2: #2a2a4a;
+  --text: #e8e8f4;
+  --muted: #6060a0;
+  --muted2: #8080b8;
+  --accent-h: #00e5ff;
+  --accent-h-dim: rgba(0,229,255,0.10);
+  --accent-h-glow: rgba(0,229,255,0.25);
+  --accent-e: #c084fc;
+  --accent-e-dim: rgba(192,132,252,0.10);
+  --accent-e-glow: rgba(192,132,252,0.25);
+  --green: #22c55e;
+  --red: #f87171;
+  --yellow: #fbbf24;
+  --radius: 14px;
+  --mono: 'IBM Plex Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── GRID NOISE BG ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image:
-      radial-gradient(circle at 20% 20%, rgba(0,229,255,0.04) 0%, transparent 50%),
-      radial-gradient(circle at 80% 80%, rgba(167,139,250,0.04) 0%, transparent 50%),
-      linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    pointer-events: none; z-index: 0;
-  }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-  .wrap { position: relative; z-index: 1; max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; }
+/* animated background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 10%, rgba(0,229,255,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse at 90% 85%, rgba(192,132,252,0.05) 0%, transparent 55%),
+    linear-gradient(rgba(255,255,255,0.014) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.014) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 36px 36px, 36px 36px;
+  pointer-events: none; z-index: 0;
+}
 
-  /* ── HEADER ── */
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 28px 0 32px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 36px;
-  }
-  .logo { display: flex; align-items: center; gap: 14px; }
-  .logo-icon {
-    width: 44px; height: 44px;
-    background: linear-gradient(135deg, var(--accent-h), var(--accent-e));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 20px;
-  }
-  h1 { font-size: 22px; font-weight: 700; }
-  h1 span { color: var(--muted); font-weight: 300; font-size: 14px; display: block; margin-top: 2px; font-family: var(--mono); }
-  .badge {
-    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(167,139,250,0.15));
-    border: 1px solid rgba(0,229,255,0.3);
-    color: var(--accent-h);
-    font-size: 12px; font-family: var(--mono);
-    padding: 4px 12px; border-radius: 100px;
-  }
+.wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 24px 100px; }
 
-  /* ── SECTION TITLES ── */
-  .section-title {
-    font-size: 13px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--muted);
-    font-family: var(--mono);
-    margin-bottom: 16px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-title::after {
-    content: ''; flex: 1; height: 1px; background: var(--border);
-  }
+/* ========= HEADER ========= */
+header {
+  padding: 32px 0 28px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.logo { display: flex; align-items: center; gap: 16px; }
+.logo-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--accent-h), var(--accent-e));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 0 32px rgba(0,229,255,0.2);
+}
+.logo-text h1 { font-size: 22px; font-weight: 900; letter-spacing: -0.3px; }
+.logo-text p { font-size: 13px; color: var(--muted2); font-family: var(--mono); margin-top: 3px; }
+.header-badge {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.badge {
+  padding: 5px 14px; border-radius: 100px; font-size: 11px;
+  font-family: var(--mono); border: 1px solid;
+}
+.badge-h { background: var(--accent-h-dim); border-color: rgba(0,229,255,0.3); color: var(--accent-h); }
+.badge-e { background: var(--accent-e-dim); border-color: rgba(192,132,252,0.3); color: var(--accent-e); }
 
-  /* ── API KEY CONFIG ── */
-  .config-grid {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px; margin-bottom: 32px;
-  }
-  .key-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    transition: border-color 0.2s;
-  }
-  .key-card:hover { border-color: var(--border2); }
-  .key-card-header {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 12px;
-  }
-  .provider-dot {
-    width: 8px; height: 8px; border-radius: 50%;
-  }
-  .dot-h { background: var(--accent-h); box-shadow: 0 0 8px var(--accent-h); }
-  .dot-c { background: var(--accent-c); box-shadow: 0 0 8px var(--accent-c); }
-  .dot-e { background: var(--accent-e); box-shadow: 0 0 8px var(--accent-e); }
+/* ========= SECTION TITLE ========= */
+.section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+  font-family: var(--mono); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  .provider-name { font-size: 13px; font-weight: 700; letter-spacing: 0.05em; }
-  .pname-h { color: var(--accent-h); }
-  .pname-c { color: var(--accent-c); }
-  .pname-e { color: var(--accent-e); }
-  .key-meta { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-right: auto; }
+/* ========= CONFIG ========= */
+.config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 36px; }
 
-  input[type="text"], input[type="password"], textarea, select {
-    width: 100%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 12px;
-    padding: 9px 12px;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    direction: ltr;
-  }
-  input:focus, textarea:focus, select:focus {
-    border-color: rgba(0,229,255,0.4);
-    box-shadow: 0 0 0 3px rgba(0,229,255,0.06);
-  }
-  .key-input-wrap { position: relative; }
-  .eye-btn {
-    position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; color: var(--muted); cursor: pointer;
-    font-size: 14px; padding: 2px;
-  }
-  .key-input-wrap input { padding-left: 32px; }
+.key-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.key-card:hover { border-color: var(--border2); }
+.key-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
+.provider-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.dot-h { background: var(--accent-h); box-shadow: 0 0 10px var(--accent-h); }
+.dot-e { background: var(--accent-e); box-shadow: 0 0 10px var(--accent-e); }
+.provider-name { font-size: 14px; font-weight: 800; letter-spacing: 0.08em; }
+.pname-h { color: var(--accent-h); }
+.pname-e { color: var(--accent-e); }
+.provider-url { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-right: auto; }
 
-  /* ── TEST CASE PANEL ── */
-  .test-panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 24px;
-  }
-  .test-panel-header {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 20px;
-  }
-  .test-panel-header h2 { font-size: 16px; font-weight: 700; }
+.field-group { margin-bottom: 12px; }
+.field-group:last-child { margin-bottom: 0; }
+.field-label {
+  display: block; font-size: 10px; font-family: var(--mono);
+  color: var(--muted2); margin-bottom: 6px;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
 
-  .presets {
-    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
-  }
-  .preset-btn {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--muted);
-    font-family: 'Cairo', sans-serif;
-    font-size: 12px; padding: 6px 14px;
-    border-radius: 100px; cursor: pointer;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .preset-btn:hover {
-    border-color: var(--border2);
-    color: var(--text);
-    background: var(--border);
-  }
-  .preset-btn.active {
-    border-color: rgba(0,229,255,0.4);
-    background: var(--accent-h-dim);
-    color: var(--accent-h);
-  }
+input[type="text"], input[type="password"], textarea, select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  padding: 9px 12px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+select { font-family: var(--mono); font-size: 12px; }
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+  border-color: rgba(0,229,255,0.4);
+  box-shadow: 0 0 0 3px rgba(0,229,255,0.06);
+}
+.key-input-wrap { position: relative; }
+.eye-btn {
+  position: absolute; left: 8px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px;
+}
+.key-input-wrap input { padding-left: 34px; }
 
-  .text-area-wrap { position: relative; }
-  textarea {
-    font-family: 'Cairo', sans-serif;
-    font-size: 15px; line-height: 1.8;
-    resize: vertical; min-height: 100px;
-    direction: rtl; text-align: right;
-    padding: 14px 16px;
-  }
-  .char-count {
-    position: absolute; bottom: 10px; left: 14px;
-    font-size: 11px; font-family: var(--mono);
-    color: var(--muted); pointer-events: none;
-  }
+/* ========= TEST PANEL ========= */
+.test-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.panel-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.panel-title { font-size: 15px; font-weight: 700; }
+.clear-btn {
+  background: none; border: 1px solid var(--border);
+  color: var(--muted); font-family: 'Cairo', sans-serif;
+  font-size: 12px; padding: 5px 14px;
+  border-radius: 6px; cursor: pointer;
+}
+.clear-btn:hover { border-color: var(--border2); color: var(--muted2); }
 
-  .options-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px; margin-top: 14px;
-  }
-  .opt-group label {
-    display: block; font-size: 11px; font-family: var(--mono);
-    color: var(--muted); margin-bottom: 5px;
-    text-transform: uppercase; letter-spacing: 0.06em;
-  }
-  select {
-    direction: rtl; font-family: 'Cairo', sans-serif;
-    font-size: 13px;
-  }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.preset-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px; padding: 6px 14px;
+  border-radius: 100px; cursor: pointer;
+  transition: all 0.15s;
+}
+.preset-btn:hover { border-color: var(--border2); color: var(--muted2); }
+.preset-btn.active {
+  border-color: rgba(0,229,255,0.45);
+  background: var(--accent-h-dim);
+  color: var(--accent-h);
+}
 
-  /* ── GENERATE BUTTON ── */
-  .gen-btn {
-    width: 100%; margin-top: 20px;
-    background: linear-gradient(135deg, #00e5ff22, #a78bfa22);
-    border: 1px solid rgba(0,229,255,0.35);
-    color: var(--accent-h);
-    font-family: 'Cairo', sans-serif;
-    font-size: 16px; font-weight: 700;
-    padding: 14px 24px; border-radius: 10px;
-    cursor: pointer; letter-spacing: 0.03em;
-    transition: all 0.2s; display: flex;
-    align-items: center; justify-content: center; gap: 10px;
-  }
-  .gen-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, #00e5ff35, #a78bfa35);
-    border-color: rgba(0,229,255,0.6);
-    box-shadow: 0 0 24px rgba(0,229,255,0.15);
-    transform: translateY(-1px);
-  }
-  .gen-btn:disabled {
-    opacity: 0.4; cursor: not-allowed; transform: none;
-  }
-  .gen-btn .spin {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(0,229,255,0.3);
-    border-top-color: var(--accent-h);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .gen-btn.loading .spin { display: block; }
-  .gen-btn.loading .btn-label { opacity: 0.5; }
+.textarea-wrap { position: relative; }
+textarea {
+  font-family: 'Tajawal', sans-serif;
+  font-size: 16px; line-height: 1.9;
+  resize: vertical; min-height: 110px;
+  direction: rtl; text-align: right;
+  padding: 14px 16px 30px;
+  border-radius: 10px;
+}
+.char-count {
+  position: absolute; bottom: 10px; left: 14px;
+  font-size: 11px; font-family: var(--mono); color: var(--muted);
+}
 
-  /* ── RESULTS GRID ── */
-  .results-grid {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px; margin-top: 8px;
-  }
-  .result-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
-    position: relative;
-  }
-  .result-card.active { border-color: var(--border2); }
-  .result-card.loading-state {
-    border-color: rgba(0,229,255,0.2);
-  }
-  .card-header {
-    padding: 16px 18px 14px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .card-title-group { display: flex; align-items: center; gap: 10px; }
-  .card-provider { font-size: 14px; font-weight: 700; }
-  .card-model { font-size: 11px; font-family: var(--mono); color: var(--muted); margin-top: 2px; }
-  .card-status {
-    font-size: 11px; font-family: var(--mono);
-    padding: 4px 10px; border-radius: 100px;
-    background: var(--surface2);
-    color: var(--muted);
-  }
-  .card-status.ok { background: rgba(34,197,94,0.15); color: var(--green); }
-  .card-status.err { background: rgba(239,68,68,0.15); color: var(--red); }
-  .card-status.running { background: rgba(0,229,255,0.1); color: var(--accent-h); }
+.options-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 14px; }
 
-  .card-body { padding: 18px; }
+.gen-btn {
+  width: 100%; margin-top: 20px;
+  background: linear-gradient(135deg, rgba(0,229,255,0.12), rgba(192,132,252,0.12));
+  border: 1px solid rgba(0,229,255,0.35);
+  color: var(--accent-h);
+  font-family: 'Cairo', sans-serif;
+  font-size: 17px; font-weight: 800;
+  padding: 15px 28px; border-radius: 10px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  transition: all 0.2s;
+}
+.gen-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(0,229,255,0.22), rgba(192,132,252,0.22));
+  box-shadow: 0 0 32px rgba(0,229,255,0.15);
+}
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  /* ── WAVEFORM / PLAYER ── */
-  .audio-player {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 14px;
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 14px;
-  }
-  .play-btn {
-    width: 36px; height: 36px; flex-shrink: 0;
-    border-radius: 50%;
-    border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .play-btn-h { background: var(--accent-h); color: #000; }
-  .play-btn-c { background: var(--accent-c); color: #fff; }
-  .play-btn-e { background: var(--accent-e); color: #fff; }
-  .play-btn:hover { transform: scale(1.08); }
+.spin {
+  width: 20px; height: 20px;
+  border: 2px solid rgba(0,229,255,0.25);
+  border-top-color: var(--accent-h);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none; flex-shrink: 0;
+}
+.gen-btn.loading .spin { display: block; }
+.gen-btn.loading .btn-label { opacity: 0.6; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
-  .player-info { flex: 1; min-width: 0; }
-  .player-bar-bg {
-    height: 4px; background: var(--border);
-    border-radius: 2px; cursor: pointer;
-    position: relative; margin-bottom: 6px; overflow: hidden;
-  }
-  .player-bar-fill {
-    height: 100%; border-radius: 2px;
-    transition: width 0.1s linear;
-    width: 0%;
-  }
-  .bar-h { background: var(--accent-h); }
-  .bar-c { background: var(--accent-c); }
-  .bar-e { background: var(--accent-e); }
-  .player-time {
-    font-size: 11px; font-family: var(--mono);
-    color: var(--muted); display: flex;
-    justify-content: space-between;
-  }
+/* ========= RESULTS ========= */
+.results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 
-  /* ── METRICS ── */
-  .metrics-row {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-  }
-  .metric {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    text-align: center;
-  }
-  .metric-val {
-    font-size: 18px; font-weight: 900;
-    font-family: var(--mono);
-    line-height: 1;
-  }
-  .metric-val.h { color: var(--accent-h); }
-  .metric-val.c { color: var(--accent-c); }
-  .metric-val.e { color: var(--accent-e); }
-  .metric-label {
-    font-size: 10px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: 0.06em;
-    margin-top: 4px; font-family: var(--mono);
-  }
-  .metric-best {
-    font-size: 9px; color: var(--green);
-    font-family: var(--mono); margin-top: 2px;
-  }
+.result-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.result-card.active { border-color: var(--border2); }
 
-  /* ── WINNER BADGE ── */
-  .winner-banner {
-    display: none;
-    background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(0,229,255,0.1));
-    border: 1px solid rgba(34,197,94,0.3);
-    border-radius: 8px; padding: 10px 16px;
-    margin-top: 14px;
-    font-size: 13px; color: var(--green);
-    align-items: center; gap: 8px;
-  }
-  .winner-banner.show { display: flex; }
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title-group { display: flex; align-items: center; gap: 10px; }
+.card-provider { font-size: 13px; font-weight: 800; letter-spacing: 0.07em; }
+.card-model { font-size: 11px; color: var(--muted); font-family: var(--mono); }
+.card-status {
+  font-size: 11px; font-family: var(--mono);
+  padding: 4px 10px; border-radius: 100px;
+  background: var(--surface2); color: var(--muted);
+}
+.card-status.ok { background: rgba(34,197,94,0.12); color: var(--green); }
+.card-status.err { background: rgba(248,113,113,0.12); color: var(--red); }
+.card-status.running { background: var(--accent-h-dim); color: var(--accent-h); }
 
-  /* ── ERROR STATE ── */
-  .error-box {
-    background: rgba(239,68,68,0.08);
-    border: 1px solid rgba(239,68,68,0.2);
-    border-radius: 8px; padding: 12px 14px;
-    font-size: 12px; color: var(--red);
-    font-family: var(--mono); word-break: break-all;
-    display: none;
-  }
-  .error-box.show { display: block; }
+.card-body { padding: 20px; }
 
-  /* ── PLACEHOLDER ── */
-  .placeholder {
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    min-height: 140px; gap: 10px;
-    color: var(--muted); font-size: 13px;
-    font-family: var(--mono);
-  }
-  .placeholder .icon { font-size: 28px; opacity: 0.3; }
+/* audio player */
+.audio-player {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 14px;
+  margin-bottom: 16px;
+}
+.play-btn {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: none; cursor: pointer; flex-shrink: 0;
+  font-size: 14px; transition: transform 0.1s, box-shadow 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.play-btn:hover { transform: scale(1.08); }
+.play-btn-h { background: var(--accent-h); color: #000; box-shadow: 0 0 16px var(--accent-h-glow); }
+.play-btn-e { background: var(--accent-e); color: #fff; box-shadow: 0 0 16px var(--accent-e-glow); }
+.player-info { flex: 1; }
+.player-bar-bg {
+  height: 5px; background: var(--border2);
+  border-radius: 3px; cursor: pointer; margin-bottom: 6px; overflow: hidden;
+}
+.player-bar-fill { height: 100%; border-radius: 3px; transition: width 0.1s linear; }
+.bar-h { background: linear-gradient(90deg, var(--accent-h), #00a8c0); }
+.bar-e { background: linear-gradient(90deg, var(--accent-e), #a05cd0); }
+.player-time { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--mono); color: var(--muted); }
 
-  /* ── LOADING SHIMMER ── */
-  .shimmer {
-    background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.4s infinite;
-    border-radius: 6px;
-  }
-  @keyframes shimmer { to { background-position: -200% 0; } }
+/* download audio btn */
+.dl-audio-btn {
+  background: var(--surface3); border: 1px solid var(--border2);
+  color: var(--muted2); font-family: var(--mono); font-size: 11px;
+  padding: 5px 12px; border-radius: 6px; cursor: pointer;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  margin-bottom: 14px; transition: all 0.15s;
+}
+.dl-audio-btn:hover { color: var(--text); border-color: var(--muted); }
 
-  /* ── HISTORY ── */
-  .history-section {
-    margin-top: 40px;
-  }
-  .history-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px; font-family: var(--mono);
-  }
-  .history-table th {
-    padding: 10px 14px;
-    text-align: right;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    font-weight: 500; font-size: 11px;
-    letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .history-table td {
-    padding: 10px 14px;
-    border-bottom: 1px solid var(--border);
-    vertical-align: middle;
-  }
-  .history-table tr:last-child td { border-bottom: none; }
-  .history-table tr:hover td { background: var(--surface2); }
-  .latency-pill {
-    display: inline-block;
-    padding: 3px 8px; border-radius: 100px;
-    font-size: 11px; font-weight: 600;
-  }
-  .latency-fast { background: rgba(34,197,94,0.15); color: var(--green); }
-  .latency-mid { background: rgba(245,158,11,0.15); color: var(--yellow); }
-  .latency-slow { background: rgba(239,68,68,0.15); color: var(--red); }
-  .empty-history {
-    text-align: center; padding: 32px;
-    color: var(--muted); font-family: var(--mono); font-size: 12px;
-  }
+/* metrics */
+.metrics-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.metric {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 10px;
+  text-align: center;
+}
+.metric-val { font-size: 20px; font-weight: 900; font-family: var(--mono); line-height: 1; }
+.metric-val.h { color: var(--accent-h); }
+.metric-val.e { color: var(--accent-e); }
+.metric-label { font-size: 10px; font-family: var(--mono); color: var(--muted); margin-top: 5px; }
 
-  /* ── CLEAR BTN ── */
-  .clear-btn {
-    background: none; border: 1px solid var(--border);
-    color: var(--muted); font-family: var(--mono);
-    font-size: 11px; padding: 5px 12px; border-radius: 6px;
-    cursor: pointer; transition: all 0.15s; margin-right: 8px;
-  }
-  .clear-btn:hover { border-color: var(--border2); color: var(--text); }
+.error-box {
+  background: rgba(248,113,113,0.07);
+  border: 1px solid rgba(248,113,113,0.2);
+  border-radius: 8px; padding: 14px 16px;
+  font-size: 12px; color: var(--red);
+  font-family: var(--mono); word-break: break-all; line-height: 1.6;
+}
+.placeholder {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 160px; gap: 10px;
+  color: var(--muted); font-size: 13px; font-family: var(--mono);
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--surface2) 25%, var(--border) 50%, var(--surface2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite; border-radius: 8px;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
 
-  /* ── TOOLTIP ── */
-  [data-tip] { position: relative; cursor: help; }
-  [data-tip]::after {
-    content: attr(data-tip);
-    position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%);
-    background: #1e1e2e; border: 1px solid var(--border);
-    color: var(--text); font-size: 11px; font-family: var(--mono);
-    padding: 5px 10px; border-radius: 6px; white-space: nowrap;
-    opacity: 0; pointer-events: none; transition: opacity 0.15s;
-    z-index: 100;
-  }
-  [data-tip]:hover::after { opacity: 1; }
+/* ========= REPORT ========= */
+.report-section { margin-top: 44px; }
+.report-btn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: linear-gradient(135deg, rgba(0,229,255,0.08), rgba(192,132,252,0.08));
+  border: 1px solid var(--border2);
+  color: var(--muted2); font-family: 'Cairo', sans-serif;
+  font-size: 14px; font-weight: 700; padding: 12px 28px;
+  border-radius: 10px; cursor: pointer; width: 100%;
+  transition: all 0.2s;
+}
+.report-btn:hover { border-color: rgba(0,229,255,0.3); color: var(--accent-h); background: linear-gradient(135deg, rgba(0,229,255,0.13), rgba(192,132,252,0.13)); }
+.report-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  /* ── COMPARE ROW ── */
-  .compare-row {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px; margin-top: 24px;
-    display: none;
-  }
-  .compare-row.show { display: block; }
-  .compare-title { font-size: 13px; font-weight: 700; margin-bottom: 14px; color: var(--muted); font-family: var(--mono); }
-  .compare-bars { display: flex; flex-direction: column; gap: 10px; }
-  .compare-bar-row { display: flex; align-items: center; gap: 12px; }
-  .compare-bar-label { width: 80px; font-size: 11px; font-family: var(--mono); color: var(--muted); flex-shrink: 0; text-align: left; }
-  .compare-bar-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .compare-bar-fill { height: 100%; border-radius: 3px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
-  .compare-bar-val { font-size: 12px; font-family: var(--mono); width: 80px; flex-shrink: 0; text-align: right; }
+/* ========= HISTORY ========= */
+.history-section { margin-top: 44px; }
+.history-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 12px; font-family: var(--mono);
+}
+.history-table th {
+  text-align: right; padding: 10px 14px;
+  font-size: 10px; letter-spacing: 0.08em;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+.history-table td {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  vertical-align: middle; color: var(--text);
+}
+.history-table tr:last-child td { border-bottom: none; }
+.history-table tr:hover td { background: var(--surface2); }
+.history-table tbody { background: var(--surface); border-radius: var(--radius); }
+.win-badge { background: rgba(251,191,36,0.15); color: var(--yellow); padding: 2px 8px; border-radius: 100px; }
+.latency-ok { color: var(--green); }
+.latency-slow { color: var(--red); }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .config-grid, .results-grid, .options-row { grid-template-columns: 1fr; }
-    .metrics-row { grid-template-columns: 1fr 1fr 1fr; }
-  }
+/* ========= COST NOTES ========= */
+.cost-note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 12px; font-family: var(--mono);
+  color: var(--muted2); line-height: 1.7;
+  margin-bottom: 28px;
+}
+.cost-note strong { color: var(--text); }
 
-  /* ── SCROLLBAR ── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+@media (max-width: 700px) {
+  .config-grid { grid-template-columns: 1fr; }
+  .results-grid { grid-template-columns: 1fr; }
+  .options-row { grid-template-columns: 1fr; }
+  .metrics-row { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -489,50 +390,71 @@
   <header>
     <div class="logo">
       <div class="logo-icon">🎙️</div>
-      <div>
-        <h1>Arabic TTS Arena
-          <span>مقارنة محركات النطق العربي — اللهجة المصرية</span>
-        </h1>
+      <div class="logo-text">
+        <h1>Arabic TTS Arena</h1>
+        <p>همسة × إيليفن لابز — مقارنة نطق عربي</p>
       </div>
     </div>
-    <span class="badge">v1.0 — Egyptian Dialect</span>
+    <div class="header-badge">
+      <span class="badge badge-h">HAMSA AI</span>
+      <span class="badge badge-e">ELEVENLABS</span>
+    </div>
   </header>
 
+  <!-- COST INFO -->
+  <div class="cost-note">
+    💰 <strong>تقدير التكلفة:</strong>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    همسة: <strong>~$0.015 / ألف حرف</strong>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    إيليفن لابز: <strong>~$0.30 / ألف حرف</strong> (Flash) &nbsp;أو&nbsp; <strong>~$0.30 / ألف حرف</strong> (Multilingual v2)
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    <span style="color:var(--muted)">* التكاليف تقريبية — راجع صفحة التسعير الرسمية لكل مزود</span>
+  </div>
+
   <!-- API KEYS -->
-  <div class="section-title">🔑 مفاتيح API</div>
-  <div class="config-grid" id="keyGrid">
+  <div class="section-title">🔑 مفاتيح API والأصوات</div>
+  <div class="config-grid">
 
     <!-- HAMSA -->
     <div class="key-card">
       <div class="key-card-header">
         <span class="provider-dot dot-h"></span>
-        <span class="provider-name pname-h">HAMSA</span>
-        <span class="key-meta">tryhamsa.com</span>
+        <span class="provider-name pname-h">HAMSA AI</span>
+        <span class="provider-url">tryhamsa.com</span>
       </div>
-      <div class="key-input-wrap">
-        <input type="password" id="key-hamsa" placeholder="Token xxxxxxxxxxxxxxxx" autocomplete="off">
-        <button class="eye-btn" onclick="toggleKey('hamsa')">👁</button>
+      <div class="field-group">
+        <label class="field-label">API Token</label>
+        <div class="key-input-wrap">
+          <input type="password" id="key-hamsa" placeholder="Token xxxxxxxxxxxxxxxx" autocomplete="off">
+          <button class="eye-btn" onclick="toggleKey('hamsa')">👁</button>
+        </div>
       </div>
-      <div style="margin-top:10px;">
-        <label style="font-size:11px;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;">Voice ID</label>
-        <input type="text" id="voice-hamsa" value="" placeholder="e.g. voice_egyptian_female_01" dir="ltr">
+      <div class="field-group">
+        <label class="field-label">المتحدث (Speaker)</label>
+        <select id="voice-hamsa" onchange="updateHamsaVoiceInfo()">
+          <option value="Mariam">Mariam — مريم (مصري أنثى)</option>
+          <option value="Subhi">Subhi — صبحي (مصري ذكر)</option>
+          <option value="Samir">Samir — سمير (مصري ذكر)</option>
+          <option value="Yasmin">Yasmin — ياسمين (خليجي أنثى)</option>
+          <option value="Omar">Omar — عمر (شامي ذكر)</option>
+          <option value="Nadia">Nadia — ناديا (فصحى أنثى)</option>
+          <option value="Rami">Rami — رامي (فصحى ذكر)</option>
+          <option value="custom">✏️ إدخال يدوي...</option>
+        </select>
       </div>
-    </div>
-
-    <!-- CARTESIA -->
-    <div class="key-card">
-      <div class="key-card-header">
-        <span class="provider-dot dot-c"></span>
-        <span class="provider-name pname-c">CARTESIA</span>
-        <span class="key-meta">api.cartesia.ai</span>
+      <div class="field-group" id="hamsa-custom-wrap" style="display:none;">
+        <label class="field-label">اسم متحدث مخصص</label>
+        <input type="text" id="voice-hamsa-custom" placeholder="مثال: Mariam" dir="ltr">
       </div>
-      <div class="key-input-wrap">
-        <input type="password" id="key-cartesia" placeholder="sk-xxxxxxxxxxxxxxxx" autocomplete="off">
-        <button class="eye-btn" onclick="toggleKey('cartesia')">👁</button>
-      </div>
-      <div style="margin-top:10px;">
-        <label style="font-size:11px;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;">Voice ID (Arabic)</label>
-        <input type="text" id="voice-cartesia" value="41534e16-2966-4c6b-9670-111411def906" placeholder="Arabic voice UUID" dir="ltr">
+      <div class="field-group">
+        <label class="field-label">اللهجة</label>
+        <select id="hamsa-dialect">
+          <option value="egy">مصري (egy)</option>
+          <option value="gulf">خليجي (gulf)</option>
+          <option value="levantine">شامي (levantine)</option>
+          <option value="msa">فصحى (msa)</option>
+        </select>
       </div>
     </div>
 
@@ -541,125 +463,123 @@
       <div class="key-card-header">
         <span class="provider-dot dot-e"></span>
         <span class="provider-name pname-e">ELEVENLABS</span>
-        <span class="key-meta">api.elevenlabs.io</span>
+        <span class="provider-url">api.elevenlabs.io</span>
       </div>
-      <div class="key-input-wrap">
-        <input type="password" id="key-eleven" placeholder="xi_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-        <button class="eye-btn" onclick="toggleKey('eleven')">👁</button>
+      <div class="field-group">
+        <label class="field-label">API Key</label>
+        <div class="key-input-wrap">
+          <input type="password" id="key-eleven" placeholder="sk_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+          <button class="eye-btn" onclick="toggleKey('eleven')">👁</button>
+        </div>
       </div>
-      <div style="margin-top:10px;">
-        <label style="font-size:11px;color:var(--muted);font-family:var(--mono);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;">Voice ID (Arabic)</label>
-        <input type="text" id="voice-eleven" value="D38z5RcWu1voky8WS1ja" placeholder="Egyptian Arabic voice ID" dir="ltr">
+      <div class="field-group">
+        <label class="field-label">الصوت العربي (Voice)</label>
+        <select id="voice-eleven" onchange="updateElevenVoiceInfo()">
+          <optgroup label="أصوات عربية مدربة">
+            <option value="D38z5RcWu1voky8WS1ja">Farida — فريدة (عربي أنثى)</option>
+            <option value="ZQe5CZNOzWyzPSCn5a3c">Hana — هنا (عربي أنثى)</option>
+            <option value="Xb7hH8MSUJpSbSDYk0k2">Alice — أليس (متعدد اللغات)</option>
+            <option value="pMsXgVXv3BLzUgSXRplE">Serena — سيرينا (متعدد اللغات)</option>
+            <option value="onwK4e9ZLuTAKqWW03F9">Daniel — دانيال (ذكر متعدد اللغات)</option>
+            <option value="N2lVS1w4EtoT3dr4eOWO">Callum — كالوم (ذكر متعدد اللغات)</option>
+            <option value="CwhRBWXzGAHq8TQ4Fs17">Roger — روجر (ذكر)</option>
+            <option value="EXAVITQu4vr4xnSDxMaL">Bella — بيلا (أنثى)</option>
+            <option value="ErXwobaYiN019PkySvjV">Antoni — أنتوني (ذكر)</option>
+            <option value="MF3mGyEYCl7XYWbV9V6O">Elli — إيلي (أنثى)</option>
+            <option value="TxGEqnHWrfWFTfGW9XjX">Josh — جوش (ذكر)</option>
+          </optgroup>
+          <optgroup label="إدخال يدوي">
+            <option value="custom">✏️ إدخال Voice ID مخصص...</option>
+          </optgroup>
+        </select>
+      </div>
+      <div class="field-group" id="eleven-custom-wrap" style="display:none;">
+        <label class="field-label">Voice ID مخصص</label>
+        <input type="text" id="voice-eleven-custom" placeholder="D38z5RcWu1voky8WS1ja" dir="ltr">
+      </div>
+      <div class="field-group">
+        <label class="field-label">النموذج</label>
+        <select id="elModel" onchange="updateElevenModelLabel()">
+          <option value="eleven_multilingual_v2">Multilingual v2 — جودة أعلى</option>
+          <option value="eleven_flash_v2_5">Flash v2.5 — أسرع وأرخص</option>
+          <option value="eleven_turbo_v2_5">Turbo v2.5 — توازن</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- VOICE NOTES -->
-  <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:14px 18px;margin-bottom:28px;font-size:12px;color:var(--muted);font-family:var(--mono);direction:ltr;">
-    <span style="color:var(--accent-h)">HAMSA</span>: Get voice IDs from <a href="https://docs.tryhamsa.com" target="_blank" style="color:var(--muted);text-decoration:underline">docs.tryhamsa.com</a> — use Egyptian Arabic voices (Layla, Sara, etc.)
-    &nbsp;|&nbsp; <span style="color:var(--accent-c)">CARTESIA</span>: Default ID = Arabic male Sonic-3 — find voices at <a href="https://cartesia.ai/voices" target="_blank" style="color:var(--muted);text-decoration:underline">cartesia.ai/voices</a> → filter Arabic
-    &nbsp;|&nbsp; <span style="color:var(--accent-e)">ELEVENLABS</span>: Preloaded = "Tarqeem - Arabic" (D38z5…) using multilingual_v2 — best for Egyptian dialect
-  </div>
-
-  <!-- TEST CASE PANEL -->
+  <!-- TEST PANEL -->
   <div class="section-title">📝 نص الاختبار</div>
   <div class="test-panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <h2 style="font-size:15px;font-weight:700;">اختر حالة اختبار أو اكتب نصك</h2>
-      <div>
-        <button class="clear-btn" onclick="clearText()">مسح</button>
-      </div>
+    <div class="panel-top">
+      <span class="panel-title">اختر حالة اختبار أو اكتب نصك</span>
+      <button class="clear-btn" onclick="clearText()">✕ مسح</button>
     </div>
-
-    <!-- PRESETS -->
     <div class="presets" id="presets">
       <button class="preset-btn active" onclick="setPreset(this,0)">🏠 ترحيب</button>
       <button class="preset-btn" onclick="setPreset(this,1)">📞 خدمة عملاء</button>
       <button class="preset-btn" onclick="setPreset(this,2)">🏡 عقارات</button>
       <button class="preset-btn" onclick="setPreset(this,3)">💰 مالية</button>
-      <button class="preset-btn" onclick="setPreset(this,4)">🕌 ديني / إرشادي</button>
+      <button class="preset-btn" onclick="setPreset(this,4)">🕌 ديني</button>
       <button class="preset-btn" onclick="setPreset(this,5)">📣 إعلان</button>
-      <button class="preset-btn" onclick="setPreset(this,6)">😤 شكوى عميل</button>
-      <button class="preset-btn" onclick="setPreset(this,7)">🔢 أرقام وبيانات</button>
+      <button class="preset-btn" onclick="setPreset(this,6)">😤 شكوى</button>
+      <button class="preset-btn" onclick="setPreset(this,7)">🔢 أرقام</button>
     </div>
-
-    <div class="text-area-wrap">
+    <div class="textarea-wrap">
       <textarea id="ttsText" rows="4" dir="rtl" placeholder="اكتب النص العربي هنا..."></textarea>
       <span class="char-count" id="charCount">0 حرف</span>
     </div>
-
     <div class="options-row">
       <div class="opt-group">
-        <label>السرعة</label>
+        <label class="field-label">السرعة</label>
         <select id="speed">
-          <option value="0.9">بطيء</option>
+          <option value="0.85">بطيء</option>
           <option value="1.0" selected>طبيعي</option>
           <option value="1.15">سريع نسبياً</option>
           <option value="1.3">سريع</option>
         </select>
       </div>
       <div class="opt-group">
-        <label>جودة الصوت</label>
+        <label class="field-label">جودة الصوت (ElevenLabs)</label>
         <select id="quality">
-          <option value="high" selected>عالية (mp3_44100_128)</option>
-          <option value="medium">متوسطة (mp3_22050_64)</option>
+          <option value="mp3_44100_128" selected>128kbps — عالية</option>
+          <option value="mp3_22050_64">64kbps — متوسطة</option>
         </select>
       </div>
       <div class="opt-group">
-        <label>النموذج — ElevenLabs</label>
-        <select id="elModel">
-          <option value="eleven_multilingual_v2" selected>Multilingual v2 (أفضل جودة)</option>
-          <option value="eleven_flash_v2_5">Flash v2.5 (أسرع)</option>
-          <option value="eleven_turbo_v2_5">Turbo v2.5</option>
+        <label class="field-label">المقارنة</label>
+        <select id="compareMode">
+          <option value="both" selected>كلا المزودين</option>
+          <option value="hamsa">همسة فقط</option>
+          <option value="eleven">إيليفن فقط</option>
         </select>
       </div>
     </div>
-
     <button class="gen-btn" id="genBtn" onclick="generateAll()">
-      <div class="spin" id="genSpin"></div>
-      <span class="btn-label">🚀 توليد الصوت من الثلاثة في آن واحد</span>
+      <div class="spin"></div>
+      <span class="btn-label">🚀 توليد الصوت ومقارنة الأداء</span>
     </button>
   </div>
 
   <!-- RESULTS -->
-  <div class="section-title">🔊 النتائج</div>
-  <div class="results-grid" id="resultsGrid">
-
-    <!-- HAMSA CARD -->
+  <div class="section-title">🔊 نتائج التوليد</div>
+  <div class="results-grid">
     <div class="result-card" id="card-hamsa">
       <div class="card-header">
         <div class="card-title-group">
           <span class="provider-dot dot-h"></span>
           <div>
             <div class="card-provider pname-h">HAMSA AI</div>
-            <div class="card-model">Arabic TTS — Egyptian Dialect</div>
+            <div class="card-model" id="hamsa-model-label">Arabic TTS</div>
           </div>
         </div>
         <span class="card-status" id="status-hamsa">⏳ انتظار</span>
       </div>
       <div class="card-body" id="body-hamsa">
-        <div class="placeholder"><div class="icon">🎙️</div><div>جاهز للتوليد</div></div>
+        <div class="placeholder"><div>🎙️</div><div>جاهز للتوليد</div></div>
       </div>
     </div>
 
-    <!-- CARTESIA CARD -->
-    <div class="result-card" id="card-cartesia">
-      <div class="card-header">
-        <div class="card-title-group">
-          <span class="provider-dot dot-c"></span>
-          <div>
-            <div class="card-provider pname-c">CARTESIA</div>
-            <div class="card-model">Sonic-3 — Arabic</div>
-          </div>
-        </div>
-        <span class="card-status" id="status-cartesia">⏳ انتظار</span>
-      </div>
-      <div class="card-body" id="body-cartesia">
-        <div class="placeholder"><div class="icon">🎙️</div><div>جاهز للتوليد</div></div>
-      </div>
-    </div>
-
-    <!-- ELEVENLABS CARD -->
     <div class="result-card" id="card-eleven">
       <div class="card-header">
         <div class="card-title-group">
@@ -672,94 +592,74 @@
         <span class="card-status" id="status-eleven">⏳ انتظار</span>
       </div>
       <div class="card-body" id="body-eleven">
-        <div class="placeholder"><div class="icon">🎙️</div><div>جاهز للتوليد</div></div>
+        <div class="placeholder"><div>🎙️</div><div>جاهز للتوليد</div></div>
       </div>
     </div>
   </div>
 
-  <!-- COMPARISON BARS -->
-  <div class="compare-row" id="compareRow">
-    <div class="compare-title">⚡ مقارنة الكمون (ms — أقل أفضل)</div>
-    <div class="compare-bars" id="compareBars"></div>
+  <!-- REPORT -->
+  <div class="report-section">
+    <div class="section-title">📥 تقرير المقارنة</div>
+    <button class="report-btn" id="reportBtn" onclick="downloadReport()" disabled>
+      📄 تحميل تقرير الأداء (CSV)
+    </button>
   </div>
 
   <!-- HISTORY -->
   <div class="history-section">
-    <div class="section-title" style="margin-top:40px;">
+    <div class="section-title">
       📋 سجل الاختبارات
-      <button class="clear-btn" onclick="clearHistory()">مسح السجل</button>
+      <button onclick="clearHistory()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:11px;margin-right:8px;">مسح السجل</button>
     </div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+    <div style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);">
       <table class="history-table">
         <thead>
           <tr>
             <th>#</th>
-            <th>النص (مقتطف)</th>
-            <th>همسة (ms)</th>
-            <th>كارتيسيا (ms)</th>
-            <th>إيليفن (ms)</th>
-            <th>همسة ($)</th>
-            <th>كارتيسيا ($)</th>
-            <th>إيليفن ($)</th>
+            <th>النص</th>
+            <th>الصوت — همسة</th>
+            <th>الصوت — إيليفن</th>
+            <th>كمون همسة</th>
+            <th>كمون إيليفن</th>
+            <th>تكلفة همسة</th>
+            <th>تكلفة إيليفن</th>
             <th>الأسرع</th>
           </tr>
         </thead>
         <tbody id="historyBody">
-          <tr><td colspan="9" class="empty-history">لا توجد اختبارات بعد — قم بالتوليد أولاً</td></tr>
+          <tr><td colspan="9" style="text-align:center;padding:36px;color:var(--muted);">لا توجد اختبارات بعد</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-</div><!-- /wrap -->
+</div>
 
 <script>
-// ═══════════════════════════════════════════
-//  PRESET TEST CASES — Egyptian Arabic
-// ═══════════════════════════════════════════
+// ==================== PRESETS ====================
 const PRESETS = [
-  // 0: Greeting / Welcome
-  `أهلاً وسهلاً! أنا مساعدك الذكي. إزيك النهارده؟ أنا هنا عشان أساعدك في أي حاجة تحتاجها. بس قولي إيه اللي تقدر أعمله ليك؟`,
-  
-  // 1: Customer Service
-  `مرحباً بحضرتك في خدمة عملاء شركتنا. أنا سعيدة بمساعدتك النهارده. لو عندك أي استفسار أو مشكلة في طلبك، قولي وأنا هحلها معاك خطوة بخطوة.`,
-  
-  // 2: Real Estate
-  `الشقة دي في قلب القاهرة الجديدة، تلاتة غرف نوم ودور أرضي. السعر معقول جداً ويناسب الأسر. الموقع قريب من المدارس والمستشفيات والمواصلات. متاح للمعاينة أي وقت.`,
-  
-  // 3: Financial
-  `رصيدك الحالي في الحساب هو اثنين وعشرين ألف وثلاثمية وخمسة وعشرين جنيه مصري. آخر معاملة كانت بالأمس بمبلغ ألف وخمسمية جنيه. هل تريد تفاصيل أكتر عن حركات الحساب؟`,
-  
-  // 4: Religious / Counseling
-  `بسم الله الرحمن الرحيم. إن الإسلام دين الرحمة والتسامح. ربنا قال في كتابه الكريم: وما أرسلناك إلا رحمة للعالمين. حافظ على صلاتك واتق الله في كل أمورك.`,
-  
-  // 5: Advertisement
-  `عرض محدود! خصم خمسين بالمية على جميع المنتجات ده الأسبوع بس. لا تفوّت الفرصة دي. سارع بالطلب قبل ما ينتهي المخزون. اتصل بينا دلوقتي أو زور موقعنا.`,
-  
-  // 6: Customer Complaint
-  `أنا زعلان جداً من الخدمة. طلبتلكم منتج من أسبوعين ولسه ماوصلش. بعت رسايل وما حدش رد عليا. ده مش مقبول خالص وعايز أعرف فين طلبي دلوقتي.`,
-  
-  // 7: Numbers & Data
-  `التقرير يوضح أن المبيعات زادت بنسبة اثنين وثلاثين بالمية في الربع التالت. الإيراد الإجمالي وصل لخمسة ملايين وسبعمية ألف جنيه. عدد العملاء الجدد كان ألفين ومية وأربعة وعشرين عميل.`
+  "أهلاً وسهلاً! أنا مساعدك الذكي. إزيك النهارده؟",
+  "مرحباً بحضرتك في خدمة العملاء. كيف أقدر أساعدك النهارده؟",
+  "الشقة دي في القاهرة الجديدة، تلات غرف ودور أرضي. الموقع ممتاز.",
+  "رصيدك الحالي اثنين وعشرين ألف وثلاثمية جنيه مصري.",
+  "بسم الله الرحمن الرحيم. حافظ على صلاتك واتق الله.",
+  "عرض خاص! خصم خمسين بالمية على كل المنتجات الأسبوع ده بس!",
+  "أنا زعلان جداً من الخدمة. الطلب ما وصلش لحد دلوقتي.",
+  "المبيعات زادت بنسبة اثنين وتلاتين بالمية والإيراد وصل لخمسة ملايين جنيه."
 ];
 
-// ═══════════════════════════════════════════
-//  STATE
-// ═══════════════════════════════════════════
 let history = [];
-let audioEls = { hamsa: null, cartesia: null, eleven: null };
-let progressIntervals = {};
+let audioEls = { hamsa: null, eleven: null };
+let audioBlobs = { hamsa: null, eleven: null };
+let lastResults = {};
 
-// ═══════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════
+// ==================== INIT ====================
 document.addEventListener('DOMContentLoaded', () => {
   setPreset(document.querySelector('.preset-btn.active'), 0);
   document.getElementById('ttsText').addEventListener('input', updateCharCount);
-  document.getElementById('elModel').addEventListener('change', () => {
-    document.getElementById('eleven-model-label').textContent = 
-      document.getElementById('elModel').options[document.getElementById('elModel').selectedIndex].text.split(' (')[0];
-  });
+  updateHamsaVoiceInfo();
+  updateElevenVoiceInfo();
+  updateElevenModelLabel();
 });
 
 function updateCharCount() {
@@ -785,181 +685,119 @@ function toggleKey(p) {
   el.type = el.type === 'password' ? 'text' : 'password';
 }
 
-// ═══════════════════════════════════════════
-//  COST ESTIMATES
-// ═══════════════════════════════════════════
-const COST_PER_CHAR = {
-  hamsa:    0.000015,   // ~$0.015 / 1k chars (estimated)
-  cartesia: 0.000030,   // $0.03 / 1k chars (Sonic-3 standard)
-  eleven:   0.000030    // $0.03 / 1k chars (Multilingual v2, Flash is cheaper)
-};
-const COST_FLASH = 0.000008; // eleven flash v2.5 ~$0.008/1k
-
-function estimateCost(provider, chars, model='') {
-  let rate = COST_PER_CHAR[provider];
-  if (provider === 'eleven' && model.includes('flash')) rate = COST_FLASH;
-  return (chars * rate).toFixed(6);
+function updateHamsaVoiceInfo() {
+  const sel = document.getElementById('voice-hamsa').value;
+  document.getElementById('hamsa-custom-wrap').style.display = sel === 'custom' ? 'block' : 'none';
+  const dialectMap = { Mariam:'egy', Subhi:'egy', Samir:'egy', Yasmin:'gulf', Omar:'levantine', Nadia:'msa', Rami:'msa' };
+  if (sel !== 'custom' && dialectMap[sel]) {
+    document.getElementById('hamsa-dialect').value = dialectMap[sel];
+  }
+  document.getElementById('hamsa-model-label').textContent = getHamsaSpeakerDisplay();
 }
 
-// ═══════════════════════════════════════════
-//  GENERATE ALL
-// ═══════════════════════════════════════════
-async function generateAll() {
-  const text = document.getElementById('ttsText').value.trim();
-  if (!text) { alert('الرجاء إدخال النص أولاً'); return; }
-
-  const btn = document.getElementById('genBtn');
-  btn.classList.add('loading');
-  btn.disabled = true;
-
-  // Reset cards
-  ['hamsa','cartesia','eleven'].forEach(p => {
-    setCardState(p, 'loading');
-    stopAudio(p);
-  });
-  document.getElementById('compareRow').classList.remove('show');
-
-  const results = {};
-
-  await Promise.allSettled([
-    callHamsa(text).then(r => results.hamsa = r),
-    callCartesia(text).then(r => results.cartesia = r),
-    callElevenLabs(text).then(r => results.eleven = r),
-  ]);
-
-  // Render results
-  ['hamsa','cartesia','eleven'].forEach(p => {
-    if (results[p]) renderResult(p, results[p]);
-  });
-
-  // Comparison bars
-  renderComparison(results);
-
-  // History
-  addHistory(text, results);
-
-  btn.classList.remove('loading');
-  btn.disabled = false;
+function getHamsaSpeakerDisplay() {
+  const sel = document.getElementById('voice-hamsa');
+  const v = sel.value;
+  if (v === 'custom') return document.getElementById('voice-hamsa-custom').value || 'Custom';
+  return sel.options[sel.selectedIndex].text.split('—')[0].trim();
 }
 
-// ═══════════════════════════════════════════
-//  API CALLS
-// ═══════════════════════════════════════════
+function getHamsaSpeaker() {
+  const v = document.getElementById('voice-hamsa').value;
+  return v === 'custom' ? (document.getElementById('voice-hamsa-custom').value.trim() || 'Mariam') : v;
+}
 
+function updateElevenVoiceInfo() {
+  const sel = document.getElementById('voice-eleven').value;
+  document.getElementById('eleven-custom-wrap').style.display = sel === 'custom' ? 'block' : 'none';
+}
+
+function getElevenVoiceId() {
+  const v = document.getElementById('voice-eleven').value;
+  return v === 'custom' ? (document.getElementById('voice-eleven-custom').value.trim() || 'D38z5RcWu1voky8WS1ja') : v;
+}
+
+function getElevenVoiceDisplay() {
+  const sel = document.getElementById('voice-eleven');
+  const v = sel.value;
+  if (v === 'custom') return document.getElementById('voice-eleven-custom').value || 'Custom';
+  return sel.options[sel.selectedIndex].text.split('—')[0].replace('✏️','').trim();
+}
+
+function updateElevenModelLabel() {
+  const m = document.getElementById('elModel').value;
+  const labels = {
+    eleven_multilingual_v2: 'Multilingual v2',
+    eleven_flash_v2_5: 'Flash v2.5',
+    eleven_turbo_v2_5: 'Turbo v2.5'
+  };
+  document.getElementById('eleven-model-label').textContent = labels[m] || m;
+}
+
+// ==================== COST ESTIMATION ====================
+// Prices per 1000 characters (approximate)
+// Hamsa: ~$0.015 / 1k chars
+// ElevenLabs: ~$0.30 / 1k chars (both Flash and Multilingual)
+function estimateCost(provider, chars) {
+  const rates = {
+    hamsa: 0.000015,   // $0.015 / 1k chars
+    eleven: 0.00030    // $0.30 / 1k chars
+  };
+  const cost = chars * (rates[provider] || 0);
+  if (cost < 0.0001) return '$<0.0001';
+  return '$' + cost.toFixed(5);
+}
+
+// ==================== HAMSA ====================
 async function callHamsa(text) {
   const key = document.getElementById('key-hamsa').value.trim();
-  const voiceId = document.getElementById('voice-hamsa').value.trim();
-  if (!key) return { error: 'لم يتم إدخال API Key لـ Hamsa' };
-  if (!voiceId) return { error: 'لم يتم إدخال Voice ID لـ Hamsa' };
+  const speaker = getHamsaSpeaker();
+  const dialect = document.getElementById('hamsa-dialect').value;
+
+  if (!key) return { error: 'يرجى إدخال API Key لـ Hamsa' };
 
   const t0 = performance.now();
   try {
-    // Hamsa has async job-based TTS — we use the direct file data endpoint if available
-    // Primary: /v1/jobs/text-to-speech (async) — fallback shown with polling
-    const resp = await fetch('https://api.tryhamsa.com/v1/jobs/text-to-speech', {
+    const resp = await fetch('https://api.tryhamsa.com/v1/realtime/tts', {
       method: 'POST',
       headers: {
         'Authorization': `Token ${key}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ voiceId, text })
-    });
-    
-    if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      return { error: `HTTP ${resp.status}: ${err.message || resp.statusText}` };
-    }
-
-    const job = await resp.json();
-    const jobId = job?.data?.id;
-    if (!jobId) return { error: 'لم يتم الحصول على Job ID' };
-
-    // Poll for completion
-    let audioUrl = null;
-    for (let i = 0; i < 30; i++) {
-      await sleep(1000);
-      const poll = await fetch(`https://api.tryhamsa.com/v1/jobs/text-to-speech/${jobId}`, {
-        headers: { 'Authorization': `Token ${key}` }
-      });
-      const pollData = await poll.json();
-      const status = pollData?.data?.status;
-      if (status === 'COMPLETED') {
-        audioUrl = pollData?.data?.jobResponse?.ttsMediaFile || pollData?.data?.mediaUrl;
-        break;
-      }
-      if (status === 'FAILED') return { error: 'فشل توليد الصوت في Hamsa' };
-    }
-
-    if (!audioUrl) return { error: 'انتهت مهلة الانتظار لـ Hamsa' };
-    const latency = Math.round(performance.now() - t0);
-    const cost = estimateCost('hamsa', text.length);
-    return { audioUrl, latency, cost, chars: text.length };
-
-  } catch(e) {
-    return { error: e.message };
-  }
-}
-
-async function callCartesia(text) {
-  const key = document.getElementById('key-cartesia').value.trim();
-  const voiceId = document.getElementById('voice-cartesia').value.trim() || '41534e16-2966-4c6b-9670-111411def906';
-  if (!key) return { error: 'لم يتم إدخال API Key لـ Cartesia' };
-
-  const t0 = performance.now();
-  try {
-    const speed = parseFloat(document.getElementById('speed').value);
-
-    const resp = await fetch('https://api.cartesia.ai/tts/bytes', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'Cartesia-Version': '2024-06-10',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model_id: 'sonic-2',
-        transcript: text,
-        voice: { mode: 'id', id: voiceId },
-        language: 'ar',
-        output_format: { container: 'mp3', encoding: 'mp3', sample_rate: 44100 },
-        generation_config: { speed: speed >= 1.2 ? 'fast' : speed <= 0.9 ? 'slow' : 'normal' }
-      })
+      body: JSON.stringify({ speaker, text, dialect, output_format: 'mp3' })
     });
 
     if (!resp.ok) {
-      const err = await resp.json().catch(() => ({}));
-      return { error: `HTTP ${resp.status}: ${JSON.stringify(err)}` };
+      const errText = await resp.text();
+      let msg = errText;
+      try { msg = JSON.parse(errText)?.message || errText; } catch(e) {}
+      return { error: `HTTP ${resp.status}: ${msg}` };
     }
 
-    const latency = Math.round(performance.now() - t0);
     const blob = await resp.blob();
     const audioUrl = URL.createObjectURL(blob);
-    const cost = estimateCost('cartesia', text.length);
-    return { audioUrl, latency, cost, chars: text.length };
-
-  } catch(e) {
-    return { error: e.message };
+    const latency = Math.round(performance.now() - t0);
+    return { audioUrl, blob, latency, cost: estimateCost('hamsa', text.length), chars: text.length, speaker, dialect };
+  } catch (e) {
+    return { error: 'خطأ في الاتصال بهمسة: ' + e.message };
   }
 }
 
+// ==================== ELEVENLABS ====================
 async function callElevenLabs(text) {
   const key = document.getElementById('key-eleven').value.trim();
-  const voiceId = document.getElementById('voice-eleven').value.trim() || 'D38z5RcWu1voky8WS1ja';
+  const voiceId = getElevenVoiceId();
   const model = document.getElementById('elModel').value;
-  if (!key) return { error: 'لم يتم إدخال API Key لـ ElevenLabs' };
+  const outputFormat = document.getElementById('quality').value;
+  const speed = parseFloat(document.getElementById('speed').value);
+
+  if (!key) return { error: 'يرجى إدخال API Key لـ ElevenLabs' };
 
   const t0 = performance.now();
   try {
-    const speed = parseFloat(document.getElementById('speed').value);
-    const quality = document.getElementById('quality').value;
-    const outputFormat = quality === 'high' ? 'mp3_44100_128' : 'mp3_22050_64';
-
     const resp = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=${outputFormat}`, {
       method: 'POST',
-      headers: {
-        'xi-api-key': key,
-        'Content-Type': 'application/json',
-      },
+      headers: { 'xi-api-key': key, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         text,
         model_id: model,
@@ -978,70 +816,97 @@ async function callElevenLabs(text) {
       return { error: `HTTP ${resp.status}: ${err?.detail?.message || JSON.stringify(err)}` };
     }
 
-    const latency = Math.round(performance.now() - t0);
     const blob = await resp.blob();
     const audioUrl = URL.createObjectURL(blob);
-    const cost = estimateCost('eleven', text.length, model);
-    return { audioUrl, latency, cost, chars: text.length };
-
-  } catch(e) {
-    return { error: e.message };
+    const latency = Math.round(performance.now() - t0);
+    return { audioUrl, blob, latency, cost: estimateCost('eleven', text.length), chars: text.length, voiceId, model };
+  } catch (e) {
+    return { error: 'خطأ في الاتصال بإيليفن لابز: ' + e.message };
   }
 }
 
-// ═══════════════════════════════════════════
-//  RENDER
-// ═══════════════════════════════════════════
-const COLORS = { hamsa: 'h', cartesia: 'c', eleven: 'e' };
-const LABELS = { hamsa: 'HAMSA', cartesia: 'CARTESIA', eleven: 'ELEVENLABS' };
+// ==================== MAIN ====================
+async function generateAll() {
+  const text = document.getElementById('ttsText').value.trim();
+  if (!text) { alert('الرجاء إدخال النص أولاً'); return; }
+
+  const mode = document.getElementById('compareMode').value;
+  const btn = document.getElementById('genBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+  document.getElementById('reportBtn').disabled = true;
+
+  const providers = [];
+  if (mode === 'both' || mode === 'hamsa') providers.push('hamsa');
+  if (mode === 'both' || mode === 'eleven') providers.push('eleven');
+
+  providers.forEach(p => setCardState(p, 'loading'));
+  // Reset inactive
+  ['hamsa','eleven'].forEach(p => {
+    if (!providers.includes(p)) {
+      document.getElementById('body-' + p).innerHTML = '<div class="placeholder"><div>🎙️</div><div>غير محدد في هذا الاختبار</div></div>';
+      document.getElementById('status-' + p).className = 'card-status';
+      document.getElementById('status-' + p).textContent = '— تخطي';
+    }
+  });
+
+  const results = {};
+  const calls = [];
+  if (providers.includes('hamsa')) calls.push(callHamsa(text).then(r => results.hamsa = r));
+  if (providers.includes('eleven')) calls.push(callElevenLabs(text).then(r => results.eleven = r));
+
+  await Promise.allSettled(calls);
+
+  providers.forEach(p => { if (results[p]) renderResult(p, results[p]); });
+
+  lastResults = { text, results, time: new Date(), hamsaVoice: getHamsaSpeakerDisplay(), elevenVoice: getElevenVoiceDisplay() };
+  addHistory(text, results);
+
+  btn.classList.remove('loading');
+  btn.disabled = false;
+
+  const hasAnySuccess = providers.some(p => results[p] && !results[p].error);
+  document.getElementById('reportBtn').disabled = !hasAnySuccess;
+}
 
 function setCardState(provider, state) {
-  const card = document.getElementById('card-' + provider);
   const status = document.getElementById('status-' + provider);
   const body = document.getElementById('body-' + provider);
-
   if (state === 'loading') {
-    card.className = 'result-card loading-state';
     status.className = 'card-status running';
     status.textContent = '⚡ جارٍ التوليد...';
-    body.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;padding:8px 0;">
-      <div class="shimmer" style="height:52px;border-radius:8px;"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
-        <div class="shimmer" style="height:54px;border-radius:8px;"></div>
-        <div class="shimmer" style="height:54px;border-radius:8px;"></div>
-        <div class="shimmer" style="height:54px;border-radius:8px;"></div>
-      </div>
-    </div>`;
+    body.innerHTML = `<div class="shimmer" style="height:140px;"></div>`;
   }
 }
 
 function renderResult(provider, data) {
-  const c = COLORS[provider];
+  const c = provider === 'hamsa' ? 'h' : 'e';
   const status = document.getElementById('status-' + provider);
   const body = document.getElementById('body-' + provider);
   const card = document.getElementById('card-' + provider);
 
   if (data.error) {
-    card.className = 'result-card';
     status.className = 'card-status err';
     status.textContent = '✕ خطأ';
-    body.innerHTML = `<div class="error-box show" dir="ltr">${data.error}</div>`;
+    body.innerHTML = `<div class="error-box">${data.error}</div>`;
     return;
   }
 
-  card.className = 'result-card active';
+  card.classList.add('active');
   status.className = 'card-status ok';
   status.textContent = '✓ جاهز';
 
-  // Create audio element
   const audio = new Audio(data.audioUrl);
   audioEls[provider] = audio;
+  audioBlobs[provider] = data.blob;
 
-  const latencyClass = data.latency < 800 ? 'fast' : data.latency < 2000 ? 'mid' : 'slow';
+  const fname = provider === 'hamsa'
+    ? `hamsa_${data.speaker}_${Date.now()}.mp3`
+    : `eleven_${data.voiceId?.slice(0,8)}_${Date.now()}.mp3`;
 
   body.innerHTML = `
     <div class="audio-player">
-      <button class="play-btn play-btn-${c}" id="playbtn-${provider}" onclick="togglePlay('${provider}')">▶</button>
+      <button class="play-btn play-btn-${c}" onclick="togglePlay('${provider}')" title="تشغيل / إيقاف">▶</button>
       <div class="player-info">
         <div class="player-bar-bg" onclick="seekAudio(event,'${provider}')">
           <div class="player-bar-fill bar-${c}" id="bar-${provider}" style="width:0%"></div>
@@ -1052,28 +917,28 @@ function renderResult(provider, data) {
         </div>
       </div>
     </div>
+    <a class="dl-audio-btn" id="dlbtn-${provider}" href="${data.audioUrl}" download="${fname}">⬇ تحميل الصوت (MP3)</a>
     <div class="metrics-row">
-      <div class="metric" data-tip="وقت من الطلب حتى اكتمال الصوت">
-        <div class="metric-val ${c}">${data.latency.toLocaleString()}</div>
+      <div class="metric">
+        <div class="metric-val ${c}">${data.latency}</div>
         <div class="metric-label">كمون (ms)</div>
       </div>
-      <div class="metric" data-tip="تكلفة مقدرة بناءً على عدد الأحرف">
-        <div class="metric-val ${c}">$${data.cost}</div>
+      <div class="metric">
+        <div class="metric-val ${c}">${data.cost}</div>
         <div class="metric-label">تكلفة تقريبية</div>
       </div>
       <div class="metric">
         <div class="metric-val ${c}">${data.chars}</div>
-        <div class="metric-label">عدد الأحرف</div>
+        <div class="metric-label">عدد الحروف</div>
       </div>
     </div>
   `;
 
-  // Wire audio events
   audio.addEventListener('timeupdate', () => {
     const pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
     const bar = document.getElementById('bar-' + provider);
-    const t = document.getElementById('time-' + provider);
     if (bar) bar.style.width = pct + '%';
+    const t = document.getElementById('time-' + provider);
     if (t) t.textContent = fmtTime(audio.currentTime);
   });
   audio.addEventListener('loadedmetadata', () => {
@@ -1081,76 +946,37 @@ function renderResult(provider, data) {
     if (d) d.textContent = fmtTime(audio.duration);
   });
   audio.addEventListener('ended', () => {
-    const btn = document.getElementById('playbtn-' + provider);
+    const btn = document.querySelector(`#card-${provider} .play-btn`);
     if (btn) btn.textContent = '▶';
   });
 }
 
-function renderComparison(results) {
-  const row = document.getElementById('compareRow');
-  const bars = document.getElementById('compareBars');
-  
-  const validResults = Object.entries(results).filter(([,v]) => v && !v.error && v.latency);
-  if (validResults.length < 2) return;
-
-  const maxLatency = Math.max(...validResults.map(([,v]) => v.latency));
-  row.classList.add('show');
-
-  bars.innerHTML = validResults.map(([p, v]) => {
-    const c = COLORS[p];
-    const colorMap = { h: 'var(--accent-h)', c: 'var(--accent-c)', e: 'var(--accent-e)' };
-    const pct = (v.latency / maxLatency * 100).toFixed(1);
-    const latencyClass = v.latency < 800 ? 'fast' : v.latency < 2000 ? 'mid' : 'slow';
-    return `
-      <div class="compare-bar-row">
-        <div class="compare-bar-label">${LABELS[p]}</div>
-        <div class="compare-bar-track">
-          <div class="compare-bar-fill" style="width:${pct}%;background:${colorMap[c]}"></div>
-        </div>
-        <div class="compare-bar-val" style="color:${colorMap[c]}">${v.latency.toLocaleString()} ms</div>
-      </div>
-    `;
-  }).join('');
-}
-
-// ═══════════════════════════════════════════
-//  AUDIO CONTROLS
-// ═══════════════════════════════════════════
 function togglePlay(provider) {
   const audio = audioEls[provider];
   if (!audio) return;
-  const btn = document.getElementById('playbtn-' + provider);
-  
-  // Pause all others
-  Object.entries(audioEls).forEach(([p, a]) => {
-    if (p !== provider && a && !a.paused) {
-      a.pause();
-      const ob = document.getElementById('playbtn-' + p);
-      if (ob) ob.textContent = '▶';
-    }
-  });
-
+  const btn = document.querySelector(`#card-${provider} .play-btn`);
   if (audio.paused) {
+    // Pause other
+    Object.keys(audioEls).forEach(p => {
+      if (p !== provider && audioEls[p] && !audioEls[p].paused) {
+        audioEls[p].pause();
+        const ob = document.querySelector(`#card-${p} .play-btn`);
+        if (ob) ob.textContent = '▶';
+      }
+    });
     audio.play();
-    btn.textContent = '⏸';
+    if (btn) btn.textContent = '⏸';
   } else {
     audio.pause();
-    btn.textContent = '▶';
+    if (btn) btn.textContent = '▶';
   }
 }
 
 function seekAudio(e, provider) {
   const audio = audioEls[provider];
-  if (!audio || !audio.duration) return;
+  if (!audio?.duration) return;
   const rect = e.currentTarget.getBoundingClientRect();
-  const pct = (e.clientX - rect.left) / rect.width;
-  audio.currentTime = pct * audio.duration;
-}
-
-function stopAudio(provider) {
-  const audio = audioEls[provider];
-  if (audio) { audio.pause(); audio.currentTime = 0; }
-  audioEls[provider] = null;
+  audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
 }
 
 function fmtTime(s) {
@@ -1160,57 +986,52 @@ function fmtTime(s) {
   return `${m}:${sec}`;
 }
 
-// ═══════════════════════════════════════════
-//  HISTORY
-// ═══════════════════════════════════════════
+// ==================== HISTORY ====================
 function addHistory(text, results) {
-  const entry = {
+  const r = results;
+  const row = {
     n: history.length + 1,
-    text: text.slice(0, 45) + (text.length > 45 ? '...' : ''),
-    hamsa: results.hamsa,
-    cartesia: results.cartesia,
-    eleven: results.eleven,
+    text: text.slice(0, 40) + (text.length > 40 ? '…' : ''),
+    hamsaVoice: getHamsaSpeakerDisplay(),
+    elevenVoice: getElevenVoiceDisplay(),
+    hamsaLatency: r.hamsa?.error ? 'خطأ' : (r.hamsa?.latency ? r.hamsa.latency + 'ms' : '—'),
+    elevenLatency: r.eleven?.error ? 'خطأ' : (r.eleven?.latency ? r.eleven.latency + 'ms' : '—'),
+    hamsaCost: r.hamsa?.cost || '—',
+    elevenCost: r.eleven?.cost || '—',
+    winner: getWinner(r)
   };
-  history.unshift(entry);
+  history.push(row);
   renderHistory();
+}
+
+function getWinner(r) {
+  const hl = r.hamsa?.latency;
+  const el = r.eleven?.latency;
+  if (hl && el) return hl < el ? '⚡ همسة' : '⚡ إيليفن';
+  if (hl && !r.hamsa?.error) return '⚡ همسة';
+  if (el && !r.eleven?.error) return '⚡ إيليفن';
+  return '—';
 }
 
 function renderHistory() {
   const tbody = document.getElementById('historyBody');
   if (!history.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="empty-history">لا توجد اختبارات</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:36px;color:var(--muted);">لا توجد اختبارات بعد</td></tr>';
     return;
   }
-
-  const fastest = (entry) => {
-    const vals = [
-      { p: 'همسة', v: entry.hamsa?.latency },
-      { p: 'كارتيسيا', v: entry.cartesia?.latency },
-      { p: 'إيليفن', v: entry.eleven?.latency },
-    ].filter(x => x.v);
-    if (!vals.length) return '—';
-    vals.sort((a,b) => a.v - b.v);
-    return vals[0].p;
-  };
-
-  tbody.innerHTML = history.map(e => {
-    const latCell = (r) => {
-      if (!r || r.error) return `<td style="color:var(--red);font-size:11px;">خطأ</td>`;
-      const cls = r.latency < 800 ? 'fast' : r.latency < 2000 ? 'mid' : 'slow';
-      return `<td><span class="latency-pill latency-${cls}">${r.latency.toLocaleString()}</span></td>`;
-    };
-    const costCell = (r) => {
-      if (!r || r.error) return `<td>—</td>`;
-      return `<td style="font-family:var(--mono);font-size:11px;color:var(--muted)">$${r.cost}</td>`;
-    };
-    return `<tr>
-      <td style="color:var(--muted)">${e.n}</td>
-      <td style="font-family:'Cairo';font-size:13px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.text}</td>
-      ${latCell(e.hamsa)}${latCell(e.cartesia)}${latCell(e.eleven)}
-      ${costCell(e.hamsa)}${costCell(e.cartesia)}${costCell(e.eleven)}
-      <td style="color:var(--green);font-family:var(--mono);font-size:11px;">${fastest(e)}</td>
-    </tr>`;
-  }).join('');
+  tbody.innerHTML = history.map(row => `
+    <tr>
+      <td style="color:var(--muted)">${row.n}</td>
+      <td style="font-family:'Cairo',sans-serif;direction:rtl;max-width:200px;">${row.text}</td>
+      <td>${row.hamsaVoice}</td>
+      <td>${row.elevenVoice}</td>
+      <td class="${row.hamsaLatency !== 'خطأ' && parseInt(row.hamsaLatency) < 2000 ? 'latency-ok' : 'latency-slow'}">${row.hamsaLatency}</td>
+      <td class="${row.elevenLatency !== 'خطأ' && parseInt(row.elevenLatency) < 2000 ? 'latency-ok' : 'latency-slow'}">${row.elevenLatency}</td>
+      <td>${row.hamsaCost}</td>
+      <td>${row.elevenCost}</td>
+      <td><span class="win-badge">${row.winner}</span></td>
+    </tr>
+  `).reverse().join('');
 }
 
 function clearHistory() {
@@ -1218,10 +1039,52 @@ function clearHistory() {
   renderHistory();
 }
 
-// ═══════════════════════════════════════════
-//  UTILS
-// ═══════════════════════════════════════════
-function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+// ==================== REPORT ====================
+function downloadReport() {
+  if (!history.length && !lastResults.results) return;
+
+  const rows = [
+    ['#', 'النص', 'الصوت-همسة', 'الصوت-إيليفن', 'كمون-همسة(ms)', 'كمون-إيليفن(ms)', 'تكلفة-همسة', 'تكلفة-إيليفن', 'الأسرع', 'التاريخ والوقت'],
+    ...history.map(r => [
+      r.n,
+      '"' + r.text.replace(/"/g, '""') + '"',
+      r.hamsaVoice,
+      r.elevenVoice,
+      r.hamsaLatency,
+      r.elevenLatency,
+      r.hamsaCost,
+      r.elevenCost,
+      r.winner,
+      new Date().toLocaleString('ar-EG')
+    ])
+  ];
+
+  // Add summary at the bottom
+  const avgHamsa = history.filter(r => r.hamsaLatency !== 'خطأ' && r.hamsaLatency !== '—').map(r => parseInt(r.hamsaLatency));
+  const avgEleven = history.filter(r => r.elevenLatency !== 'خطأ' && r.elevenLatency !== '—').map(r => parseInt(r.elevenLatency));
+  const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : '—';
+
+  rows.push([]);
+  rows.push(['ملخص التقرير']);
+  rows.push(['إجمالي الاختبارات', history.length]);
+  rows.push(['متوسط كمون همسة (ms)', avg(avgHamsa)]);
+  rows.push(['متوسط كمون إيليفن (ms)', avg(avgEleven)]);
+  rows.push(['تاريخ التقرير', new Date().toLocaleString('ar-EG')]);
+  rows.push([]);
+  rows.push(['ملاحظة التسعير']);
+  rows.push(['همسة: ~$0.015 لكل 1000 حرف (تقريبي)']);
+  rows.push(['إيليفن لابز: ~$0.30 لكل 1000 حرف (تقريبي)']);
+  rows.push(['* راجع صفحات التسعير الرسمية للأسعار الدقيقة']);
+
+  const csv = '\uFEFF' + rows.map(r => r.join(',')).join('\n'); // BOM for Arabic in Excel
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `tts-report-${Date.now()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 </script>
 </body>
 </html>
